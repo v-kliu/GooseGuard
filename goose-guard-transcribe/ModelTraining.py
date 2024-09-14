@@ -12,14 +12,10 @@ df_train = pd.read_csv('cleaned_fraud_dataset_training.csv')
 
 # Map 'fraud' and 'normal' to numerical labels
 df_train['label'] = df_train['label'].map({'fraud': 1, 'normal': 0})
-
-# Initialize BERT tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-large-uncased')
 
-# Tokenize the training data
 train_encodings = tokenizer(df_train['transcription'].tolist(), truncation=True, padding=True, max_length=512)
 
-# Convert to PyTorch datasets
 class SpamDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels=None):
         self.encodings = encodings
@@ -36,10 +32,8 @@ class SpamDataset(torch.utils.data.Dataset):
 
 train_dataset = SpamDataset(train_encodings, df_train['label'].tolist())
 
-# Load the pre-trained BERT model and move it to the correct device
 model = BertForSequenceClassification.from_pretrained('bert-large-uncased', num_labels=2).to(device)
 
-# Define training arguments
 training_args = TrainingArguments(
     output_dir='./results',
     evaluation_strategy="no",  # Disable evaluation during training
