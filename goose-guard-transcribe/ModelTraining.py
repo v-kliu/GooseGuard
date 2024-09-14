@@ -4,10 +4,8 @@ import pandas as pd
 from transformers import BertTokenizer, BertForSequenceClassification, Trainer, TrainingArguments
 import torch
 
-# Check if CUDA (GPU) is available, and set the device accordingly
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Load the training dataset
 df_train = pd.read_csv('cleaned_fraud_dataset_training.csv')
 
 # Map 'fraud' and 'normal' to numerical labels
