@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image'; // Import Image component for images
 
 // Import logos for the footer
-import logoLoo from './images/waterlooLogo.jpg';
-import logoFaisal from './images/guelphLogo.jpg';
-import logoVictor from './images/washingtonLogo.png';
-import hackTheNorthLogo from './images/hackthenorth.jpg'; // Add the Hack the North logo
+import logoLoo from './waterlooLogo.jpg';
+import logoFaisal from './guelphLogo.jpg';
+import logoVictor from './washingtonLogo.png';
+import hackTheNorthLogo from './hackthenorth.jpg'; // Add the Hack the North logo
 
 export default function Home() {
   const router = useRouter();
