@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Head from 'next/head'; // Import Head for metadata
 import Image from 'next/image'; // Import Image component for images
 
-// Import logos for the footer
+// Import logos for the footer and navbar
+import gooseGuardLogo from './gooseGuardLogo.png';
 import logoLoo from './waterlooLogo.jpg';
 import logoFaisal from './guelphLogo.jpg';
 import logoVictor from './washingtonLogo.png';
@@ -107,6 +109,13 @@ export default function Home() {
       className="relative flex flex-col items-center justify-center min-h-screen bg-[#0d0d0d] text-white p-8 overflow-hidden"
       onMouseMove={handleMouseMove}
     >
+      {/* Add metadata using Head */}
+      <Head>
+        <title>GooseGuard - Protect Yourself</title>
+        <meta name="description" content="GooseGuard - AI-powered cybersecurity to protect you from scam emails, texts, and calls." />
+        <link rel="icon" href="/favicon.ico" /> {/* Make sure to provide a favicon */}
+      </Head>
+
       {/* Matrix background effect */}
       <canvas
         id="matrix-effect"
@@ -128,9 +137,18 @@ export default function Home() {
       ></div>
 
       {/* Top Navigation Bar */}
-      <nav className="absolute top-0 w-full flex justify-center items-center gap-x-4 p-4 bg-gray-700 shadow-md z-10">
-        <Image src={hackTheNorthLogo} alt="Hack the North Logo" className="w-8 h-8" />
-        <p className="text-lg text-gray-300">Made with ♥ at Hack the North</p>
+      <nav className="absolute top-0 w-full flex items-center justify-between p-4 bg-gray-700 shadow-md z-10">
+        {/* Left-aligned GooseGuard Logo */}
+        <div className="flex items-center gap-x-2 cursor-pointer" onClick={() => router.push('/')}>
+          <Image src={gooseGuardLogo} alt="GooseGuard Logo" className="w-8 h-8 invert" />
+          <p className="text-lg text-gray-300">GooseGuard</p>
+        </div>
+        
+        {/* Center-aligned Hack the North Logo */}
+        <div className="flex items-center gap-x-4">
+          <Image src={hackTheNorthLogo} alt="Hack the North Logo" className="w-8 h-8" />
+          <p className="text-lg text-gray-300">Made with ♥ at Hack the North</p>
+        </div>
       </nav>
 
       {/* Main Content */}

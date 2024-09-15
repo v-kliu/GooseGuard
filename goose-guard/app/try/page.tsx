@@ -1,8 +1,15 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Import Image component for logos
+
+// Import the logo images
+import gooseGuardLogo from './../gooseGuardLogo.png';
+import hackTheNorthLogo from './../hackthenorth.jpg';
 
 export default function Try() {
+  const router = useRouter();
   const [isRecording, setIsRecording] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<string[]>([]);
@@ -16,13 +23,11 @@ export default function Try() {
   // Handle microphone recording
   const handleRecord = async () => {
     if (isRecording) {
-      // Stop recording
       mediaRecorderRef.current?.stop();
       setIsRecording(false);
       setIsInputSubmitted(true);
       simulateScamDetection();
     } else {
-      // Start recording
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const mediaRecorder = new MediaRecorder(stream);
@@ -65,7 +70,7 @@ export default function Try() {
   const handleTextSubmit = () => {
     if (textInput.trim()) {
       setMessages([textInput]);
-      setTextInput(''); // Clear the input after submission
+      setTextInput('');
       setIsInputSubmitted(true);
       simulateScamDetection();
     }
@@ -75,23 +80,34 @@ export default function Try() {
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = event.target;
     setTextInput(textarea.value);
-
-    // Reset height to auto to correctly calculate scrollHeight
     textarea.style.height = 'auto';
-    // Set height to match scrollHeight
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
   // Simulate scam detection
   const simulateScamDetection = () => {
-    // Simulate a simple random scam detection for demonstration
     const status = Math.random() > 0.5 ? 'Scam' : 'Not Scam';
     setScamStatus(status);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#0d0d0d] text-white p-8">
-      <h1 className="text-4xl font-bold text-green-400 mb-12">Try GooseGuard</h1>
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#0d0d0d] text-white p-8 overflow-hidden">
+      {/* Nav Bar */}
+      <nav className="absolute top-0 w-full flex items-center justify-between p-4 bg-gray-700 shadow-md z-10">
+        {/* Left-aligned GooseGuard Logo */}
+        <div className="flex items-center gap-x-2 cursor-pointer" onClick={() => router.push('/')}>
+          <Image src={gooseGuardLogo} alt="GooseGuard Logo" className="w-8 h-8 invert" />
+          <p className="text-lg text-gray-300">GooseGuard</p>
+        </div>
+        
+        {/* Center-aligned Hack the North Logo */}
+        <div className="flex items-center gap-x-4">
+          <Image src={hackTheNorthLogo} alt="Hack the North Logo" className="w-8 h-8" />
+          <p className="text-lg text-gray-300">Made with ♥ at Hack the North</p>
+        </div>
+      </nav>
+
+      <h1 className="text-4xl font-bold text-green-400 mb-12 mt-20">Try GooseGuard</h1>
 
       {/* Conditional rendering: Show buttons if no input has been submitted */}
       {!isInputSubmitted && (
@@ -126,7 +142,7 @@ export default function Try() {
               onChange={handleTextChange}
               rows={1}
               className="bg-transparent text-white w-full resize-none outline-none placeholder-gray-400 px-2"
-              style={{ overflow: 'hidden' }} // Hide overflow for a smoother expansion
+              style={{ overflow: 'hidden' }}
             />
             <button
               onClick={handleTextSubmit}
