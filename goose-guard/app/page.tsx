@@ -113,7 +113,7 @@ export default function Home() {
       <Head>
         <title>GooseGuard - Protect Yourself</title>
         <meta name="description" content="GooseGuard - AI-powered cybersecurity to protect you from scam emails, texts, and calls." />
-        <link rel="icon" href="/favicon.ico" /> {/* Make sure to provide a favicon */}
+        <link rel="icon" href="/icon.ico" /> {/* Make sure to provide a favicon */}
       </Head>
 
       {/* Matrix background effect */}
