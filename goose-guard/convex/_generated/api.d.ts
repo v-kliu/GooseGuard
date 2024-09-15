@@ -15,6 +15,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as functions_storeTokens from "../functions/storeTokens.js";
 import type * as transcriptions from "../transcriptions.js";
 
 /**
@@ -26,6 +27,7 @@ import type * as transcriptions from "../transcriptions.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "functions/storeTokens": typeof functions_storeTokens;
   transcriptions: typeof transcriptions;
 }>;
 export declare const api: FilterApi<

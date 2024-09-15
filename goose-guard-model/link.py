@@ -1,10 +1,12 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from ModelEval import result
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=["POST"])
 def main():
-    return jsonify({"scam": True}) 
+    data = request.json
+    return jsonify({"scam": result(data["transcription"])})
 
 if __name__ == "__main__":
     app.run()
