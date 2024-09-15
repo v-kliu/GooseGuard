@@ -14,7 +14,8 @@ export default function Try() {
   const [textInput, setTextInput] = useState('');
   const [messages, setMessages] = useState<string[]>([]);
   const [isInputSubmitted, setIsInputSubmitted] = useState(false);
-  const [scamStatus, setScamStatus] = useState<'Scam' | 'Not Scam'>();
+  const [scamStatus, setScamStatus] = useState<'Scam' | 'Not Scam' | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -25,8 +26,6 @@ export default function Try() {
     if (isRecording) {
       mediaRecorderRef.current?.stop();
       setIsRecording(false);
-      setIsInputSubmitted(true);
-      simulateScamDetection();
     } else {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -41,11 +40,14 @@ export default function Try() {
           }
         };
 
-        mediaRecorder.onstop = () => {
+        mediaRecorder.onstop = async () => {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
           const audioUrl = URL.createObjectURL(audioBlob);
           setAudioURL(audioUrl);
-          setMessages(['Audio recording saved']);
+          setMessages(['']);
+
+          // Send the audio blob to the server for transcription
+          await handleAudioUpload(audioBlob);
         };
 
         mediaRecorder.start();
@@ -56,13 +58,89 @@ export default function Try() {
     }
   };
 
+  // Handle audio upload (recorded audio)
+  const handleAudioUpload = async (audioBlob: Blob) => {
+    setIsInputSubmitted(true);
+
+    // Prepare the form data to send the recorded audio
+    const formData = new FormData();
+    formData.append('file', audioBlob, 'recorded_audio.wav');
+
+    try {
+      // Upload the audio to get the transcription
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const uploadData = await uploadResponse.json();
+      if (!uploadData.success) {
+        setMessages(['Failed to transcribe the audio']);
+        return;
+      }
+
+      // Display the transcription result
+      setMessages([uploadData.transcription]);
+
+      // Now, send the transcription to the scam API
+      const scamResponse = await fetch('/api/scam', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ transcription: uploadData.transcription }),
+      });
+
+      const scamData = await scamResponse.json();
+      setScamStatus(scamData.status);
+    } catch (error) {
+      console.error('Error uploading audio:', error);
+      setMessages(['Failed to process the recorded audio']);
+    }
+  };
+
   // Handle file upload
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setMessages([`Uploaded: ${file.name}`]);
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
       setIsInputSubmitted(true);
-      simulateScamDetection();
+
+      setMessages(['']);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        // Upload the file to get the transcription
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (!uploadData.success) {
+          setMessages(['Failed to transcribe the uploaded file']);
+          return;
+        }
+
+        // Display the transcription result
+        setMessages([uploadData.transcription]);
+
+        // Now, send the transcription to the scam API
+        const scamResponse = await fetch('/api/scam', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ transcription: uploadData.transcription }),
+        });
+
+        const scamData = await scamResponse.json();
+        setScamStatus(scamData.status);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        setMessages(['Failed to process the uploaded file']);
+      }
     }
   };
 
@@ -72,7 +150,7 @@ export default function Try() {
       setMessages([textInput]);
       setTextInput('');
       setIsInputSubmitted(true);
-      simulateScamDetection();
+      semiScamDetection(textInput);
     }
   };
 
@@ -84,11 +162,33 @@ export default function Try() {
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
-  // Simulate scam detection
-  const simulateScamDetection = () => {
-    const status = Math.random() > 0.5 ? 'Scam' : 'Not Scam';
-    setScamStatus(status);
+  // Scam detection for uploaded files (optional)
+  const scamDetection = async () => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const uploadResponse = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    const uploadData = await uploadResponse.json();
+    if (!uploadData.success) return;
+    semiScamDetection(uploadData.transcription)
   };
+
+  const semiScamDetection = async (transcription: string) => {
+    const scamResponse = await fetch('/api/scam', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ transcription: transcription }),
+    });
+    const scamData = await scamResponse.json();
+    setScamStatus(scamData.status);
+  }
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#0d0d0d] text-white p-8 overflow-hidden">
@@ -174,10 +274,10 @@ export default function Try() {
           {/* Scam Detection Result */}
           <div
             className={`mt-4 p-4 text-center text-xl font-bold rounded-lg ${
-              scamStatus === 'Scam' ? 'bg-red-600' : 'bg-green-600'
+              scamStatus ? 'bg-red-600' : 'bg-green-600'
             }`}
           >
-            {scamStatus}
+            {scamStatus ? 'Scam' : 'Not Scam'}
           </div>
         </div>
       )}
