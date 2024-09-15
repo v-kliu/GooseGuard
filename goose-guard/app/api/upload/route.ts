@@ -1,5 +1,3 @@
-import { api } from "@/convex/_generated/api";
-import { fetchMutation } from "convex/nextjs";
 import * as dotenv from 'dotenv';
 dotenv.config();
 import Groq from "groq-sdk";
@@ -16,9 +14,8 @@ export async function POST(request: Request) {
       model: "distil-whisper-large-v3-en",
       response_format: "verbose_json",
     });
-    await fetchMutation(api.transcriptions.createTranscription, { text: transcription.text })
     return Response.json({ success: true, transcription: transcription.text })
   }
-
+  
   return Response.json({ success: false })
 }
