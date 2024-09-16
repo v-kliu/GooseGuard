@@ -3,6 +3,6 @@
 /input
 /output
 /data
-model*
 *.csv
 ._*
+__pycache__
