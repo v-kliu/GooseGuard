@@ -15,7 +15,6 @@ export default function Try() {
   const [messages, setMessages] = useState<string[]>([]);
   const [isInputSubmitted, setIsInputSubmitted] = useState(false);
   const [scamStatus, setScamStatus] = useState<'Scam' | 'Not Scam' | null>(null);
-  const [file, setFile] = useState<File | null>(null);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -67,36 +66,7 @@ export default function Try() {
     formData.append('file', audioBlob, 'recorded_audio.wav');
 
     try {
-      // Upload the audio to get the transcription
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const uploadData = await uploadResponse.json();
-      if (!uploadData.success) {
-        setMessages(['Failed to transcribe the audio']);
-        return;
-      }
-
-      // Display the transcription result
-      setMessages([uploadData.transcription]);
-
-      // Now, send the transcription to the scam API
-      const scamResponse = await fetch('/api/scam', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ transcription: uploadData.transcription }),
-      });
-
-      const scamData = await scamResponse.json();
-      if (!scamData.success) {
-        setMessages([scamData.transcription]);
-        return;
-      }
-      setScamStatus(scamData.status);
+      scamDetection(formData)
     } catch (error) {
       console.error('Error uploading audio:', error);
       setMessages(['Failed to process the recorded audio']);
@@ -107,44 +77,13 @@ export default function Try() {
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      setFile(selectedFile);
       setIsInputSubmitted(true);
-
       setMessages(['']);
       const formData = new FormData();
       formData.append('file', selectedFile);
 
       try {
-        // Upload the file to get the transcription
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const uploadData = await uploadResponse.json();
-        if (!uploadData.success) {
-          setMessages(['Failed to transcribe the uploaded file']);
-          return;
-        }
-
-        // Display the transcription result
-        setMessages([uploadData.transcription]);
-
-        // Now, send the transcription to the scam API
-        const scamResponse = await fetch('/api/scam', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ transcription: uploadData.transcription }),
-        });
-
-        const scamData = await scamResponse.json();
-        if (!scamData.success) {
-          setMessages([scamData.transcription]);
-          return;
-        }
-        setScamStatus(scamData.status);
+        scamDetection(formData)
       } catch (error) {
         console.error('Error uploading file:', error);
         setMessages(['Failed to process the uploaded file']);
@@ -171,18 +110,18 @@ export default function Try() {
   };
 
   // Scam detection for uploaded files (optional)
-  const scamDetection = async () => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
+  const scamDetection = async (formData: FormData) => {
+    console.log(`Entering scam detection with ${formData}`)
 
     const uploadResponse = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
     });
     const uploadData = await uploadResponse.json();
-    if (!uploadData.success) return;
+    if (!uploadData.success) {
+      setMessages(['Failed to transcribe the uploaded file']);
+      return;
+    }
     semiScamDetection(uploadData.transcription)
   };
 
@@ -195,10 +134,7 @@ export default function Try() {
       body: JSON.stringify({ transcription: transcription }),
     });
     const scamData = await scamResponse.json();
-    if (!scamData.success) {
-      setMessages([scamData.transcription]);
-      return;
-    }
+    setMessages([scamData.transcription]);
     setScamStatus(scamData.status);
   }
 

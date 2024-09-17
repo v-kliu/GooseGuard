@@ -6,7 +6,7 @@ import torch
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-df_train = pd.read_csv('cleaned_fraud_dataset_training.csv')
+df_train = pd.read_csv('data/cleaned_fraud_dataset_training.csv')
 
 # Map 'fraud' and 'normal' to numerical labels
 df_train['label'] = df_train['label'].map({'fraud': 1, 'normal': 0})

@@ -20,10 +20,11 @@ export async function POST(request: Request) {
   let scam = false;
   if (response.ok) {
     scam = response_data[0][0]["label"] == "LABEL_1" ? true : false;
-    console.log(scam)
   } else {
     transcription = response_data["error"] + ` with an ETA of: ${response_data?.["estimated_time"]}ms`
   }
   await fetchMutation(api.transcriptions.createTranscription, { transcription: transcription, scam: scam })
-  return Response.json({ success: true, status: scam, transcription: transcription })
+  const res = { success: true, status: scam, transcription: transcription }
+  console.log(res)
+  return Response.json(res)
 }

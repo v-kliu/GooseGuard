@@ -2,7 +2,5 @@
 .env
 /input
 /output
-/data
-*.csv
 ._*
 __pycache__

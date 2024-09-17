@@ -1,4 +1,6 @@
 pandas
 transformers
+transformers[torch]
 torch
 flask
+python-dotenv
