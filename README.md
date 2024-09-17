@@ -5,7 +5,7 @@ Made under 36 hours for Hack the North 2024
 ### Links
 - Demo: https://goose-guard.vercel.app
 - Devpost: https://devpost.com/software/gooseguard 
-- Hugging Face: https://huggingface.co/zelchy/scam-detection
+- Hugging Face: https://huggingface.co/harrumnoor/scam-detection
 
 Protect yourself from scam emails, texts, and calls with our AI-powered cybersecurity platform. GooseGuard helps identify fraudulent communication using AI to analyze and detect suspicious patterns in emails, text messages, and phone calls!
 
