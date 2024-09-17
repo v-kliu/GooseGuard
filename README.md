@@ -1,9 +1,10 @@
 # GooseGuard
 
+![Home Picture](/goose-guard/app/gooseguardhome.png)
 Built in under 36 hours for **Hack the North 2024**
 
 ## Links
-- **Demo**: [GooseGuard](https://goose-guard.vercel.app)
+- **Live Website**: [GooseGuard](https://goose-guard.vercel.app)
 - **Devpost**: [GooseGuard on Devpost](https://devpost.com/software/gooseguard)
 - **Hugging Face**: [Scam Detection Model](https://huggingface.co/harrumnoor/scam-detection)
 
@@ -54,4 +55,4 @@ Online scams are a global issue, costing individuals and businesses billions of 
     3. `.env` variables: `HF_API_KEY` - Hugging Face API key, `GROQ_API_KEY` - Groq API key
  
 ## Team
-![Team Picture](/components/images/considerthisteam.jpg)
+![Team Picture](/goose-guard/app/gooseguardteam.jpg)
