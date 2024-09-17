@@ -92,6 +92,10 @@ export default function Try() {
       });
 
       const scamData = await scamResponse.json();
+      if (!scamData.success) {
+        setMessages([scamData.transcription]);
+        return;
+      }
       setScamStatus(scamData.status);
     } catch (error) {
       console.error('Error uploading audio:', error);
@@ -136,6 +140,10 @@ export default function Try() {
         });
 
         const scamData = await scamResponse.json();
+        if (!scamData.success) {
+          setMessages([scamData.transcription]);
+          return;
+        }
         setScamStatus(scamData.status);
       } catch (error) {
         console.error('Error uploading file:', error);
@@ -187,6 +195,10 @@ export default function Try() {
       body: JSON.stringify({ transcription: transcription }),
     });
     const scamData = await scamResponse.json();
+    if (!scamData.success) {
+      setMessages([scamData.transcription]);
+      return;
+    }
     setScamStatus(scamData.status);
   }
 
