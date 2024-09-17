@@ -1,5 +1,12 @@
 # GooseGuard
 
+Made under 36 hours for Hack the North 2024
+
+### Links
+- Demo: https://goose-guard.vercel.app
+- Devpost: https://devpost.com/software/gooseguard 
+- Hugging Face: https://huggingface.co/zelchy/scam-detection
+
 Protect yourself from scam emails, texts, and calls with our AI-powered cybersecurity platform. GooseGuard helps identify fraudulent communication using AI to analyze and detect suspicious patterns in emails, text messages, and phone calls!
 
 ### [`goose-guard`](/goose-guard/)
@@ -10,13 +17,13 @@ Protect yourself from scam emails, texts, and calls with our AI-powered cybersec
 
 ## Installation
 - Clone *this* repository
-- Diverging instructions for various sub-folders:
-- [`goose-guard`](/goose-guard/) 
+- Instructions diverge below for Next.js application and BERT model:
+- [`goose-guard`](/goose-guard/) - Next.js
     1. Setup virtual environment: `python -m venv .venv`, then `pip install -r requirements.txt`
         - To enter the virtual environment: `./venv/Scripts/activate`
         - To leave the virtual environment: `deactivate`
     2. `.env` variables: `HF_API_KEY` - Hugging Face API key
-- [`goose-guard-model`](/goose-guard-model/) - `.env`:
+- [`goose-guard-model`](/goose-guard-model/) - BERT:
     1. Setup environment: `npm install`
     2. Setup Convex: `npx convex dev`
     3. `.env` variables: `HF_API_KEY` - Hugging Face API key, `GROQ_API_KEY` - Groq API key
